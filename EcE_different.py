@@ -6,7 +6,7 @@ if __name__ == '__main__':
         dec1 = shortkey8_dec(i,ciphertext)
         enc1 = shortkey8_enc(i, plaintext)
         for l in range(2^8):
-            enc2 = shortkey8_enc8(l, dec1)
+            enc2 = shortkey8_enc(l, dec1)
             if enc2 == enc1:
                 print("Found the keys: ")
                 print("k1:"+i)
