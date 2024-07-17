@@ -35,14 +35,26 @@ int main(void) {
 
         int encrypted_key_len;
         unsigned char encrypted_key[RSA_size(keypair)];
-
-
-        if((encrypted_key_len = RSA_public_encrypt(strlen(key)+1, key, encrypted_key, keypair, RSA_PKCS1_OAEP_PADDING)) == -1) 
+        EVP_PKEY_CTX* enc_ctx = EVP_PKEY_CTX_new(keypair, NULL);
+        if (EVP_PKEY_encrypt_init(enc_ctx) <= 0) {
             handle_errors();
+        }
+
+        size_t encrypted_msg_len;
+        if (EVP_PKEY_encrypt(enc_ctx, NULL, &encrypted_msg_len, key, strlen(key)) <= 0) {
+            handle_errors();
+        }
+
+
+        unsigned char encrypted_key[encrypted_msg_len];
+        if (EVP_PKEY_encrypt(enc_ctx, encrypted_key, &encrypted_msg_len, msg, strlen(msg)) <= 0) {
+            handle_errors();
+        }
 
 	send_bob(encrypted_key);
+        EVP_PKEY_free(keypair);
 
-        FILE *file_in; //already with the file
+        FILE *file_in; #already with the file
 
 
 	EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
@@ -86,4 +98,3 @@ int main(void) {
 
        return 0;
 }
-	
