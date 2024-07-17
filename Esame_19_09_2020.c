@@ -42,7 +42,7 @@ int main(void) {
 
 	send_bob(encrypted_key);
 
-        FILE *file_in; #already with the file
+        FILE *file_in; //already with the file
 
 
 	EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
