@@ -51,6 +51,9 @@ int main(){
    unsigned char payload[KEY_LENGTH+16];
    int update_len;
    int ciphertext_len=0;
+   //usa int PEM_write_PKCS8PrivateKey(FILE *fp, EVP_PKEY *x, const EVP_CIPHER *enc,
+   //                            char *kstr, int klen,
+   //                            pem_password_cb *cb, void *u);
 
    EVP_CipherUpdate(ctx,payload,&update_len,rsa_keypair,EVP_PKEY_size(rsa_keypair));
    ciphertext_len+=update_len;
