@@ -28,7 +28,7 @@ int main(){
     if(!RAND_bytes(r1,MAX))
         handle_errors();
 
-    if(!RAND_bytes(iv,128))
+    if(!RAND_bytes(iv,MAX))
         handle_errors();
 
     if(!RAND_bytes(r2,MAX))
