@@ -9,11 +9,12 @@ int envelop_MAC(RSA *rsa_keypair, char *message, int message_len, char *key, int
 
     if(!EVP_DigestInit(md, EVP_sha256()))
             return 1; 
-    strcat(message,key);
+   // strcat(message,key);
 
-    EVP_DigestUpdate(md, message, (keylenght+message));
+    EVP_DigestUpdate(md, message, message_len);
+    EVP_DigestUpdate(md, key, keylenght);
 
-    unsigned char digest_pre[message_len+keylenght];
+    unsigned char digest_pre[EVP_MD_size(EVP_sha256())];
     int md_len;
 
     EVP_DigestFinal(md, digest, &md_len);	
@@ -24,7 +25,7 @@ int envelop_MAC(RSA *rsa_keypair, char *message, int message_len, char *key, int
     if(!EVP_DigestInit(md, EVP_sha256()))
             return 1; 
 
-    unsigned char digest[message_len+keylenght];
+    unsigned char digest[EVP_MD_size(EVP_sha256())];
 
     EVP_DigestUpdate(md, digest_pre, md_len);
     int md_len;
@@ -32,11 +33,15 @@ int envelop_MAC(RSA *rsa_keypair, char *message, int message_len, char *key, int
     EVP_DigestFinal(md, digest, &md_len);	
     EVP_MD_CTX_free(md);
 
-
+    //RSA encr
+    EVP_PKEY_CTX* enc_ctx = EVP_PKEY_CTX_new(keypair, NULL);
+    if (EVP_PKEY_encrypt_init(enc_ctx) <= 0) {
+      
     int encrypted_data_len;
 
-    if((encrypted_data_len = RSA_public_encrypt((md_len+1), digest, result, rsa_keypair, RSA_PKCS1_OAEP_PADDING)) == -1) 
-            return 1; 
+    if (EVP_PKEY_encrypt(enc_ctx, result, &encrypted_msg_len, digest, strlen(digest)) <= 0) {
+        handle_errors();
+    }
     
     return 0;
 }
